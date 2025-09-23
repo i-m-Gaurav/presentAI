@@ -1,18 +1,17 @@
-import React from 'react';
-import { 
-  Home, 
-  FileText, 
-  Upload, 
-  Settings, 
-  User, 
+import React from "react";
+import {
+  Home,
+  FileText,
+  Upload,
+  Settings,
+  User,
   LogOut,
   Sparkles,
   FolderOpen,
   CreditCard,
   AlertCircle,
-  Menu,
-  X
-} from 'lucide-react';
+  X,
+} from "lucide-react";
 
 interface SidebarProps {
   activeTab: string;
@@ -25,24 +24,24 @@ interface SidebarProps {
 }
 
 const menuItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: Home },
-  { id: 'create', label: 'Create Presentation', icon: Sparkles },
-  { id: 'presentations', label: 'My Presentations', icon: FileText },
-  { id: 'upload', label: 'Upload PDF', icon: Upload },
-  { id: 'templates', label: 'Templates', icon: FolderOpen },
-  { id: 'billing', label: 'Billing & Usage', icon: CreditCard },
-  { id: 'settings', label: 'Settings', icon: Settings },
-  { id: 'profile', label: 'Profile', icon: User },
+  { id: "dashboard", label: "Dashboard", icon: Home },
+  { id: "create", label: "Create Presentation", icon: Sparkles },
+  { id: "presentations", label: "My Presentations", icon: FileText },
+  { id: "upload", label: "Upload PDF", icon: Upload },
+  { id: "templates", label: "Templates", icon: FolderOpen },
+  { id: "billing", label: "Billing & Usage", icon: CreditCard },
+  { id: "settings", label: "Settings", icon: Settings },
+  { id: "profile", label: "Profile", icon: User },
 ];
 
-export const Sidebar: React.FC<SidebarProps> = ({ 
-  activeTab, 
-  onTabChange, 
-  onLogout, 
+export const Sidebar: React.FC<SidebarProps> = ({
+  activeTab,
+  onTabChange,
+  onLogout,
   userPlan,
   freeUsage,
   isMobileMenuOpen = false,
-  onMobileMenuToggle
+  onMobileMenuToggle,
 }) => {
   const usagePercentage = (freeUsage.presentations / freeUsage.limit) * 100;
   const isNearLimit = usagePercentage >= 80;
@@ -71,24 +70,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* Free Plan Usage Warning */}
-      {userPlan === 'free' && isNearLimit && (
+      {userPlan === "free" && isNearLimit && (
         <div className="m-4 p-3 bg-orange-50 border border-orange-200 rounded-lg">
           <div className="flex items-center mb-2">
             <AlertCircle className="w-4 h-4 text-orange-500 mr-2" />
-            <span className="text-sm font-medium text-orange-800">Usage Alert</span>
+            <span className="text-sm font-medium text-orange-800">
+              Usage Alert
+            </span>
           </div>
           <p className="text-xs text-orange-700 mb-2">
             {freeUsage.presentations}/{freeUsage.limit} presentations used
           </p>
           <div className="w-full bg-orange-200 rounded-full h-1.5 mb-2">
-            <div 
+            <div
               className="bg-orange-500 h-1.5 rounded-full"
               style={{ width: `${usagePercentage}%` }}
             />
           </div>
           <button
             onClick={() => {
-              onTabChange('billing');
+              onTabChange("billing");
               onMobileMenuToggle?.();
             }}
             className="text-xs text-orange-600 hover:text-orange-800 font-medium"
@@ -110,8 +111,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 }}
                 className={`w-full flex items-center px-4 py-3 text-left rounded-lg transition-all duration-200 ${
                   activeTab === item.id
-                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
-                    : 'text-gray-700 hover:bg-gray-100'
+                    ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg"
+                    : "text-gray-700 hover:bg-gray-100"
                 }`}
               >
                 <item.icon className="w-5 h-5 mr-3" />
@@ -133,9 +134,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <p className="text-xs text-gray-500 capitalize">{userPlan} Plan</p>
           </div>
         </div>
-        
+
         {/* Free Plan Usage */}
-        {userPlan === 'free' && (
+        {userPlan === "free" && (
           <div className="mb-4 p-3 bg-gray-50 rounded-lg">
             <div className="flex items-center justify-between mb-2">
               <span className="text-xs text-gray-600">Presentations</span>
@@ -144,18 +145,23 @@ export const Sidebar: React.FC<SidebarProps> = ({
               </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-1.5">
-              <div 
+              <div
                 className={`h-1.5 rounded-full transition-all duration-300 ${
-                  isNearLimit ? 'bg-orange-500' : 'bg-purple-500'
+                  isNearLimit ? "bg-orange-500" : "bg-purple-500"
                 }`}
                 style={{ width: `${usagePercentage}%` }}
               />
             </div>
           </div>
         )}
-        
+
         <button
           onClick={() => {
+            try {
+              localStorage.removeItem("token");
+            } catch {
+              // ignore storage errors (private mode, etc.)
+            }
             onLogout();
             onMobileMenuToggle?.();
           }}
@@ -178,7 +184,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile Sidebar Overlay */}
       {isMobileMenuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
-          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={onMobileMenuToggle} />
+          <div
+            className="absolute inset-0 bg-black bg-opacity-50"
+            onClick={onMobileMenuToggle}
+          />
           <div className="absolute left-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-xl flex flex-col">
             {sidebarContent}
           </div>

@@ -3,8 +3,9 @@ import { Sparkles, ArrowRight, Play, ChevronDown, Zap, Brain, Wand2 } from 'luci
 import { Button } from '../ui/Button';
 
 interface HeroProps {
-  onGetStarted: () => void;
+  onGetStarted?: () => void;  // <-- optional now
 }
+
 
 const presentationExamples = [
   {
@@ -164,7 +165,7 @@ export const Hero: React.FC<HeroProps> = ({ onGetStarted }) => {
             <div className="flex flex-col sm:flex-row gap-6">
               <Button
                 size="lg"
-                onClick={onGetStarted}
+                onClick={() => onGetStarted?.()}
                 className="group text-xl px-10 py-5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-2xl hover:shadow-purple-500/25 transform hover:scale-105 transition-all duration-300 border-2 border-purple-400/50"
               >
                 <Sparkles className="w-6 h-6 mr-3 group-hover:animate-spin" />

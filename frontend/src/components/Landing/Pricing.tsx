@@ -56,7 +56,7 @@ const plans = [
 ];
 
 interface PricingProps {
-  onSelectPlan: (plan: string) => void;
+  onSelectPlan?: (plan: string) => void;
 }
 
 export const Pricing: React.FC<PricingProps> = ({ onSelectPlan }) => {
@@ -107,7 +107,7 @@ export const Pricing: React.FC<PricingProps> = ({ onSelectPlan }) => {
                 className="w-full"
                 variant={plan.popular ? 'primary' : 'outline'}
                 size="lg"
-                onClick={() => onSelectPlan(plan.name)}
+                onClick={() => onSelectPlan?.(plan.name)}
               >
                 {plan.cta}
               </Button>

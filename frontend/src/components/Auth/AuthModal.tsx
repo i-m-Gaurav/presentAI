@@ -3,12 +3,22 @@ import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Mail, Lock, User, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import  axios  from 'axios';
 
 interface AuthModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
   defaultMode?: 'login' | 'signup';
+}
+
+interface LoginResponse {
+  token: string;
+  message: string;
+}
+
+interface SignupResponse {
+  message: string;
 }
 
 export const AuthModal: React.FC<AuthModalProps> = ({
@@ -27,44 +37,58 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     password: ''
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Dummy authentication logic
-    if (mode === 'login') {
-      if (formData.email === 'demo@presentai.com' && formData.password === 'demo123') {
-        setLoading(false);
-        onSuccess();
-        onClose();
-        return;
-      } else if (formData.email && formData.password) {
-        // Accept any email/password for demo purposes
-        setLoading(false);
-        onSuccess();
-        onClose();
-        return;
-      } else {
-        setError('Please enter valid credentials');
-      }
-    } else {
-      // Signup - accept any valid inputs
-      if (formData.name && formData.email && formData.password.length >= 6) {
-        setLoading(false);
-        onSuccess();
-        onClose();
-        return;
-      } else {
-        setError('Please fill all fields (password must be 6+ characters)');
-      }
+  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  setError("");
+
+  try {
+    if (mode === "signup") {
+      // Signup API
+
+      console.log(`${BASE_URL}/user/signup`);
+      const response = await axios.post<SignupResponse>(`${BASE_URL}/user/signup`, {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+      });
+
+
+      console.log("response",response.data);
+
+      // After signup, switch to login mode automatically
+      setMode("login");
+      setLoading(false);
+      setError("Signup successful! Please login.");
+      return;
     }
-    
-    setLoading(false);
-  };
+
+    if (mode === "login") {
+      console.log(`${BASE_URL}/user/login`);
+      const response = await axios.post<LoginResponse>(`${BASE_URL}/user/login`, {
+        email: formData.email,
+        password: formData.password,
+      });
+
+      const { token } = response.data;
+
+      // Save token in localStorage
+      localStorage.setItem("token", token);
+
+      setLoading(false);
+      onSuccess();  // notify App.tsx that login succeeded
+      onClose();    // close modal
+      return;
+    }
+  } catch (err) {
+    console.error(err);
+    setError("Something went wrong. Please try again.");
+  }
+
+  setLoading(false);
+};
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({

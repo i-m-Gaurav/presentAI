@@ -20,6 +20,8 @@ import {
   FileText
 } from 'lucide-react';
 
+import { useNavigate } from 'react-router-dom';
+
 interface PresentationsListProps {
   onUpgrade: () => void;
 }
@@ -110,6 +112,7 @@ export const PresentationsList: React.FC<PresentationsListProps> = ({ onUpgrade 
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('modified');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const navigate = useNavigate();
 
   const filteredPresentations = presentations.filter(presentation => {
     const matchesSearch = presentation.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -131,6 +134,10 @@ export const PresentationsList: React.FC<PresentationsListProps> = ({ onUpgrade 
     }
   });
 
+  const handleCreateNew = () => {
+    navigate("/dashboard/create");
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -143,7 +150,7 @@ export const PresentationsList: React.FC<PresentationsListProps> = ({ onUpgrade 
           <Button variant="outline" icon={Share2}>
             Share Folder
           </Button>
-          <Button icon={Eye}>
+          <Button icon={Eye} onClick={handleCreateNew}>
             Create New
           </Button>
         </div>
