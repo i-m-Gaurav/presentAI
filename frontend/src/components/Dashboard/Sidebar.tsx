@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect } from "react";
+import axios from "axios";
 import {
   Home,
   FileText,
@@ -34,6 +35,11 @@ const menuItems = [
   { id: "profile", label: "Profile", icon: User },
 ];
 
+interface User{
+  name : string;
+  email: string;
+}
+
 export const Sidebar: React.FC<SidebarProps> = ({
   activeTab,
   onTabChange,
@@ -43,8 +49,37 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isMobileMenuOpen = false,
   onMobileMenuToggle,
 }) => {
+
+
   const usagePercentage = (freeUsage.presentations / freeUsage.limit) * 100;
   const isNearLimit = usagePercentage >= 80;
+  const [user,setUser] = React.useState<User | null >(null);
+
+  const BASE_URL = 'http://localhost:3000';
+
+  async function getUser(){
+    try {
+
+      const response = await axios.get<User>(`${BASE_URL}/user/getProfile`,{
+        headers : {
+          Authorization : `Bearer ${localStorage.getItem("token")}`,
+        }
+      })
+
+      console.log("User Profile:", response.data);
+      setUser(response.data);
+      console.log("User state:", user);
+
+      
+    } catch (error) {
+      console.error("Error fetching user profile:", error);
+      
+    } 
+  }
+
+  useEffect(()=>{
+    getUser();
+  },[]);
 
   const sidebarContent = (
     <>
@@ -129,10 +164,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
             <User className="w-5 h-5 text-white" />
           </div>
-          <div className="ml-3">
-            <p className="text-sm font-medium text-gray-900">John Doe</p>
+          {user && (
+            <div className="ml-3">
+            <p className="text-sm font-medium text-gray-900">{user.name}</p>
             <p className="text-xs text-gray-500 capitalize">{userPlan} Plan</p>
           </div>
+          )}
         </div>
 
         {/* Free Plan Usage */}

@@ -9,7 +9,6 @@ import {
   Eye,
   Edit,
   Download,
-  Trash2,
   Calendar,
   Clock,
   Share2,
@@ -111,7 +110,7 @@ export const PresentationsList: React.FC<PresentationsListProps> = ({ onUpgrade 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [sortBy, setSortBy] = useState('modified');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  // const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const navigate = useNavigate();
 
   const filteredPresentations = presentations.filter(presentation => {
